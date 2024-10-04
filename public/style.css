@@ -1,0 +1,218 @@
+/* Default (Light Mode) */
+:root {
+    --primary-bg: #ffffff;
+    --primary-text: #000000;
+    --secondary-bg: #f0f0f0;
+    --button-bg: #007bff;
+    --button-text: #ffffff;
+    --icon-border-radius: 10px;
+    --selected-border-color: limegreen;
+}
+
+/* Dark Mode */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --primary-bg: #121212;
+        --primary-text: #e0e0e0;
+        --secondary-bg: #1e1e1e;
+        --button-bg: #1a73e8;
+        --button-text: #ffffff;
+        --selected-border-color: limegreen;
+    }
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: var(--primary-bg);
+    color: var(--primary-text);
+    margin: 0;
+    padding: 0;
+}
+
+#app {
+    padding: 20px;
+}
+
+.repo-list {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-bottom: 50px;
+}
+
+.repo-card {
+    display: flex;
+    align-items: center;
+    background-color: var(--secondary-bg);
+    border-radius: 20px;
+    padding: 20px;
+    margin: 10px 0;
+    width: 80%;
+    max-width: 600px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    justify-content: space-between;
+}
+
+.repo-icon {
+    width: 100px;
+    height: 100px;
+    border-radius: var(--icon-border-radius);
+    margin-right: 20px;
+    /* IE, only works on <img> tags */
+    -ms-interpolation-mode: nearest-neighbor;
+    /* Firefox */
+    image-rendering: crisp-edges;
+    /* Chromium + Safari */
+    image-rendering: pixelated;
+}
+
+.repo-info {
+    flex: 1;
+    margin-right: 60px;
+}
+
+.repo-name {
+    font-size: 1.5rem;
+    margin: 0;
+}
+
+.repo-description {
+    font-size: 1rem;
+    color: #666;
+}
+
+.add-button {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: var(--button-bg);
+    color: var(--button-text);
+    border: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 32px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.add-button.checked {
+    background-color: limegreen;
+}
+
+.add-button svg {
+    fill: white; /* Ensure the checkmark is white */
+}
+
+/* Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+    background-color: var(--primary-bg);
+    margin: 5% auto;
+    padding: 20px;
+    border-radius: 20px;
+    width: 60%;
+    max-width: 800px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.close {
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close:hover {
+    color: red;
+}
+
+/* Centering and styling for modal title and input */
+.modal-title {
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    box-sizing: border-box;
+    border-radius: 5px;
+    font-size: 1rem;
+    background-color: var(--secondary-bg); /* Use secondary background */
+    color: var(--primary-text); /* Ensure text color matches the mode */
+}
+
+/* Centering and consistent grid for icons */
+.icon-selector {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px;
+    justify-content: center; /* Center the entire grid */
+    margin-top: 20px;
+    justify-items: center; /* Center the icons themselves */
+}
+
+.icon {
+    width: 60px;
+    height: 60px;
+    border-radius: var(--icon-border-radius);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-sizing: border-box; /* Ensure padding and border are included in size */
+    border: 3px solid transparent; /* Prevent shifting by adding transparent border */
+}
+
+.icon.selected {
+    border-color: var(--selected-border-color);
+}
+
+/* Center Complete Selection button */
+.complete-selection-button {
+    background-color: var(--button-bg);
+    color: var(--button-text);
+    border: none;
+    padding: 10px 20px;
+    font-size: 1.2rem;
+    border-radius: 20px;
+    cursor: pointer;
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.complete-selection-button:hover {
+    background-color: limegreen;
+}
+
+/* Download button inside modal, centered */
+.download-button {
+    background-color: var(--button-bg);
+    color: var(--button-text);
+    border: none;
+    padding: 10px 20px;
+    font-size: 1rem;
+    border-radius: 10px;
+    margin-top: 20px;
+    cursor: pointer;
+    display: inline-block;
+}
+
+.download-button:hover {
+    background-color: limegreen;
+}

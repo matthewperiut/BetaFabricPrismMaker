@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>b1.7.3 Fabric Mods</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div id="app">
+        <div class="repo-list">
+            <!--INSERT HERE-->
+        </div>
+
+        <button class="complete-selection-button" onclick="openModal()">Complete Selection</button>
+    </div>
+
+    <!-- Modal Structure -->
+    <div id="selectionModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2 class="modal-title">Complete Your Selection</h2>
+            <input type="text" id="instanceName" placeholder="Enter instance name">
+            <div class="icon-selector">
+                <!-- 20 icons will be generated here -->
+            </div>
+
+            <button class="download-button" onclick="download()">Download</button>
+        </div>
+    </div>
+
+    <!-- JavaScript to toggle the button -->
+    <script>
+        const selected = [];
+        let selectedIcon = Math.floor(Math.random() * 20) + 1; // Randomly select an icon initially
+
+        function toggleButton(button, modid) {
+            if (button.classList.contains('checked')) {
+                button.innerHTML = '+'; // Change back to plus if already checked
+                button.classList.remove('checked');
+                // Use splice to remove the element at index i
+                for (let i = 0; i < selected.length; i++) {
+                    if (selected[i] == modid) {
+                        selected.splice(i, 1);
+                        break;
+                    }
+                }
+            } else {
+                // Insert the SVG for checkmark
+                button.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="white"><path d="M20.285 2l-11.285 11.567-5.286-5.011-3.714 3.716 9 8.728 15-15.285z"/></svg>`;
+                button.classList.add('checked');
+                selected.push(modid);
+            }
+        }
+
+        // Function to open the modal
+        function openModal() {
+            document.getElementById('selectionModal').style.display = 'block';
+            generateIcons();
+        }
+
+        // Function to close the modal
+        function closeModal() {
+            document.getElementById('selectionModal').style.display = 'none';
+        }
+
+        // Function to generate the icon selector
+        function generateIcons() {
+            const iconContainer = document.querySelector('.icon-selector');
+            iconContainer.innerHTML = ''; // Clear previous icons
+
+            for (let i = 1; i <= 20; i++) {
+                const icon = document.createElement('img');
+                icon.src = `/betaicon_${i}.png`;
+                icon.classList.add('icon');
+                icon.dataset.iconId = i;
+
+                // Add selected class to the randomly chosen icon
+                if (i === selectedIcon) {
+                    icon.classList.add('selected');
+                }
+
+                icon.onclick = function () {
+                    document.querySelectorAll('.icon').forEach(icon => icon.classList.remove('selected'));
+                    this.classList.add('selected');
+                    selectedIcon = i; // Update the selected icon
+                };
+
+                iconContainer.appendChild(icon);
+            }
+        }
+
+        function isValidFileName(fileName) {
+            // Define a regular expression for invalid characters in file names
+            const invalidChars = /[<>:"/\\|?*]/;
+
+            // Check if the file name contains any invalid characters
+            return !invalidChars.test(fileName);
+        }
+
+        // Function to handle the download process
+        function download() {
+            const instanceName = document.getElementById('instanceName').value;
+            console.log('Selected:', selected);
+            console.log('Instance Name:', instanceName);
+            console.log('Selected Icon:', selectedIcon);
+
+            if (!isValidFileName(instanceName)) {
+                alert("Illegal name, cannot contain " + /[<>:"/\\|?*]/)
+                return;
+            }
+
+                // Create the payload to send to the server
+                const payload = {
+                    mods: selected,         // Array of selected mods
+                    icon: selectedIcon,      // Selected icon number
+                    instanceName: instanceName  // Entered instance name
+                };
+
+            // Send the payload to the server via a POST request
+            fetch('/download', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(payload),
+            })
+                .then(response => {
+                    if (response.ok) {
+                        return response.json();
+                    } else {
+                        console.error('Download failed');
+                    }
+                })
+                .then(data => {
+                    window.location.replace(document.location.origin + "/share/" + data.message);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        }
+        // Close the modal if user clicks outside of it
+        window.onclick = function (event) {
+            const modal = document.getElementById('selectionModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        }
+    </script>
+</body>
+
+</html>
