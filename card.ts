@@ -49,7 +49,7 @@ const mod_entries: ModEntry[] = [
     // SERVER COMPAT NEEDED { repo: "telvarost/WhatAreYouScoring-StationAPI", branch: "main", modrinth_id: "whatareyouscoring-stationapi" },
     { repo: "telvarost/CreativeEditorWands-StationAPI", branch:"main",modrinth_id:"creativeeditorwands-stationapi"},
     { repo: "matthewperiut/crates-fabric-b1.7.3", branch:"master", modrinth_id:"crate"},
-    { repo: "matthewperiut/Glass-Networking", branch:"fix-client-connection", hide: true}
+    { repo: "calmilamsy/Glass-Networking", branch:"master", modrinth_id:"glass-networking", hide: true}
     //{repo:"",branch:"",modrinth_id:""}
 ];
 
