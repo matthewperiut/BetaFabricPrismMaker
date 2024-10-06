@@ -75,7 +75,17 @@ async function handler(req: Request): Promise<Response> {
         }
         return new Response("404 Not Found", { status: 404 });
     } else if (url.pathname === "/video.mp4") {
-        return await serveFile(req, "./public/video.mp4");
+        const filePath = "./public/video.mp4";
+        const fileResponse = await serveFile(req, filePath);
+
+        const headers = new Headers(fileResponse.headers);
+        headers.set("Cache-Control", "public, max-age=2628000"); // Cache for 1 month
+
+        return new Response(fileResponse.body, {
+            status: fileResponse.status,
+            statusText: fileResponse.statusText,
+            headers,
+        });
     } else if (url.pathname === "/getName") {
         const { id } = await req.json();
         let path = await findFirstZipFileInFolder("./instances/" + id);
@@ -99,17 +109,17 @@ async function handler(req: Request): Promise<Response> {
 
 function replaceAll(str, find, replace) {
     return str.replace(new RegExp(find, 'g'), replace);
-  }
+}
 
 async function findFirstZipFileInFolder(folder: string): Promise<string | null> {
     for await (const dirEntry of Deno.readDir(folder)) {
-      if (dirEntry.isFile && dirEntry.name.endsWith(".zip")) {
-        console.log(folder + "/" + dirEntry.name);
-        return folder + "/" + dirEntry.name;
-      }
+        if (dirEntry.isFile && dirEntry.name.endsWith(".zip")) {
+            console.log(folder + "/" + dirEntry.name);
+            return folder + "/" + dirEntry.name;
+        }
     }
     return null; // Return null if no .zip file is found
-  }
+}
 
 const port = 8080;
 console.log(`Server running on http://localhost:${port}`);

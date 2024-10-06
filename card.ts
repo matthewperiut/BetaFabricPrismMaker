@@ -99,25 +99,29 @@ const fetchAllMods = async () => {
 
 await fetchAllMods();
 
+let cached_result = "";
 export function getModHTML(): string {
-    let result = "";
+    if (cached_result === "") {
+        let result = "";
 
-    console.log("HUH");
-
-    mods.forEach(element => {
-        if (!element.api && element.hide == undefined && element.title != undefined) {
-            let adjusted_title = element.title.replace(/(?<!^)([A-Z](?![A-Z\s]))/g, ' $1');
-            result += '<div class="repo-card">' +
-                '<img src="' + element.icon + '" class="repo-icon" alt="' + adjusted_title + ' icon">' +
-                '<div class="repo-info">' +
-                '<h2 class="repo-name">' + adjusted_title + '</h2>' +
-                '<p class="repo-description">' + element.description + '</p>' +
-                '</div>' +
-                '<button class="add-button" onclick="toggleButton(this, \'' + element.id + '\')">+</button>' +
-                '</div>';
-        }
-
-    });
-
-    return result;
+        mods.forEach(element => {
+            if (!element.api && element.hide == undefined && element.title != undefined) {
+                let adjusted_title = element.title.replace(/(?<!^)([A-Z](?![A-Z\s]))/g, ' $1');
+                result += '<div class="repo-card">' +
+                    '<img src="' + element.icon + '" class="repo-icon" alt="' + adjusted_title + ' icon">' +
+                    '<div class="repo-info">' +
+                    '<h2 class="repo-name">' + adjusted_title + '</h2>' +
+                    '<p class="repo-description">' + element.description + '</p>' +
+                    '</div>' +
+                    '<button class="add-button" onclick="toggleButton(this, \'' + element.id + '\')">+</button>' +
+                    '</div>';
+            }
+    
+        });
+    
+        cached_result = result;
+        return result;
+    } else {
+        return cached_result;
+    }
 }
