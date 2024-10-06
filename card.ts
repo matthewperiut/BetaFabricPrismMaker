@@ -102,13 +102,15 @@ await fetchAllMods();
 export function getModHTML(): string {
     let result = "";
 
+    console.log("HUH");
 
     mods.forEach(element => {
-        if (!element.api && element.hide == undefined) {
+        if (!element.api && element.hide == undefined && element.title != undefined) {
+            let adjusted_title = element.title.replace(/(?<!^)([A-Z](?![A-Z\s]))/g, ' $1');
             result += '<div class="repo-card">' +
-                '<img src="' + element.icon + '" class="repo-icon" alt="' + element.title + ' icon">' +
+                '<img src="' + element.icon + '" class="repo-icon" alt="' + adjusted_title + ' icon">' +
                 '<div class="repo-info">' +
-                '<h2 class="repo-name">' + element.title + '</h2>' +
+                '<h2 class="repo-name">' + adjusted_title + '</h2>' +
                 '<p class="repo-description">' + element.description + '</p>' +
                 '</div>' +
                 '<button class="add-button" onclick="toggleButton(this, \'' + element.id + '\')">+</button>' +

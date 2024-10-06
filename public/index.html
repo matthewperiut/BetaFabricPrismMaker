@@ -6,12 +6,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>b1.7.3 Fabric Mods</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
 </head>
 
 <body>
     <div id="app">
-        <div class="repo-list">
+        <h1>Beta 1.7.3 Fabric Modpack Creator</h1>
+
+        <div class="list">
             <!--INSERT HERE-->
+            <!-- EXAMPLE BELOW -->
         </div>
 
         <button class="complete-selection-button" onclick="openModal()">Complete Selection</button>
@@ -22,7 +26,7 @@
         <div class="modal-content">
             <span class="close" onclick="closeModal()">&times;</span>
             <h2 class="modal-title">Complete Your Selection</h2>
-            <input type="text" id="instanceName" placeholder="Enter instance name">
+            <input type="text" id="instance-name" placeholder="Enter instance name">
             <div class="icon-selector">
                 <!-- 20 icons will be generated here -->
             </div>
@@ -102,7 +106,7 @@
 
         // Function to handle the download process
         function download() {
-            const instanceName = document.getElementById('instanceName').value;
+            const instanceName = document.getElementById('instance-name').value;
             console.log('Selected:', selected);
             console.log('Instance Name:', instanceName);
             console.log('Selected Icon:', selectedIcon);

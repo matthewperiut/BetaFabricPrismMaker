@@ -5,169 +5,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Share Instance</title>
-    <style>
-        :root {
-            --primary-bg: #f4f4f4;
-            /* Light mode primary background */
-            --secondary-bg: #ffffff;
-            /* Light mode secondary background */
-            --accent-color: limegreen;
-            /* Accent color for buttons and highlights */
-            --copy-confirm-bg: #e0ffe0;
-            /* Background for copy confirmation */
-            --text-color: #333;
-        }
-
-        /* Dark mode styles */
-        @media (prefers-color-scheme: dark) {
-            :root {
-                --primary-bg: #121212;
-                /* Dark mode primary background */
-                --secondary-bg: #1e1e1e;
-                /* Dark mode secondary background */
-                --accent-color: #90ee90;
-                /* Softer limegreen for dark mode */
-                --copy-confirm-bg: #004400;
-                /* Darker green confirmation background */
-                --text-color: #e0e0e0;
-            }
-
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Arial', sans-serif;
-        }
-
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: var(--primary-bg);
-            flex-direction: column;
-        }
-
-        #app {
-            width: 90%;
-            max-width: 700px;
-            padding: 20px;
-            margin: 20px;
-        }
-
-        h1 {
-            font-size: 28px;
-            color: var(--text-color);
-            /* Darker text color for light mode */
-            text-align: center;
-            margin-bottom: 10px;
-        }
-
-        .card {
-            background-color: var(--secondary-bg);
-            border-radius: 15px;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        .copy-section {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-
-        .repo-link-input {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #ddd;
-            border-radius: 15px;
-            font-size: 16px;
-            margin-bottom: 10px;
-            transition: border-color 0.3s;
-            text-align: center;
-            background-color: var(--secondary-bg);
-            /* Keeping the background color */
-            color: var(--text-color) !important;
-            /* Explicitly force the text color to white */
-        }
-
-        .repo-link-input:focus {
-            border-color: var(--accent-color);
-            outline: none;
-        }
-
-        .copy-button {
-            padding: 12px 24px;
-            background-color: var(--accent-color);
-            border: none;
-            color: white;
-            font-size: 16px;
-            cursor: pointer;
-            border-radius: 15px;
-            transition: background-color 0.3s;
-        }
-
-        .copy-button:hover {
-            background-color: rgb(41, 175, 41);
-        }
-
-        .copy-button:active {
-            background-color: limegreen;
-        }
-
-        video {
-            width: 100%;
-            border-radius: 15px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        .copy-confirmation {
-            margin-top: 10px;
-            font-size: 14px;
-            color: green;
-            opacity: 0;
-            transition: opacity 0.5s ease;
-        }
-
-        .visible {
-            opacity: 1;
-        }
-
-        @media (max-width: 600px) {
-            h1 {
-                font-size: 24px;
-            }
-
-            .repo-link-input {
-                font-size: 14px;
-            }
-
-            .copy-button {
-                font-size: 14px;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="icon" href="../favicon.ico" type="image/x-icon">
 </head>
 
 <body>
 
-    <div id="app">
-        <div class="card">
+    <div id="share">
             <h1>Prism Instance</h1>
-            <div class="copy-section">
-                <input type="text" id="repo-link" class="repo-link-input" value="Loading..." readonly>
-                <button class="copy-button" onclick="copyToClipboard()">Copy</button>
+            <div class="copyable-textbox">
+                <input type="text" id="share-link" class="share-link" value="Loading..." readonly>
             </div>
-        </div>
-        <!--
-    <video controls>
-        <source src="./video.mp4" type="video/mp4">
-        Your browser does not support the video tag.
-    </video>-->
+            <button class="complete-selection-button" onclick="copyToClipboard()">Copy</button>
+            <h1> How To Install </h1>
+            <video autoplay muted loop>
+                <source src="../video.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
     </div>
 
     <script>
@@ -178,7 +32,7 @@
         }
 
         function copyToClipboard() {
-            const copyText = document.getElementById('repo-link');
+            const copyText = document.getElementById('share-link');
             navigator.clipboard.writeText(copyText.value).then(() => {
                 alert("Copied to clipboard");
             }).catch(err => {
@@ -189,7 +43,6 @@
 
         async function getName(id, retryCount = 0) {
             // Wait a second for server
-            await new Promise(r => setTimeout(r, 1000));
             const payload = {
                 id: id
             };
@@ -211,13 +64,13 @@
                 })
                 .then(data => {
                     console.log(data);
-                    document.getElementById('repo-link').value = document.location.origin + "/share/" + id + "/" + data.message;
+                    document.getElementById('share-link').value = document.location.origin + "/share/" + id + "/" + data.message;
                 })
                 .catch(error => {
                     console.error('Error:', error);
                     if (retryCount < 10) { // limit to 5 retries
-                        console.log('Retrying in 3 seconds...');
-                        setTimeout(() => getName(id, retryCount + 1), 3000);
+                        console.log('Retrying...');
+                        setTimeout(() => getName(id, retryCount + 1), retryCount * 100);
                     } else {
                         console.error('Max retries reached');
                     }

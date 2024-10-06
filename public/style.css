@@ -27,16 +27,41 @@ body {
     color: var(--primary-text);
     margin: 0;
     padding: 0;
+    display: flex;
+
+    min-height: 100vh; /* Ensure the content is vertically centered */
+    box-sizing: border-box;
 }
 
 #app {
+    width: 90%;
+    max-width: 700px;
     padding: 20px;
+    margin: 20px auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center; /* Ensures that all text is centered */
+    margin-bottom: 60px;
 }
 
+#share {
+    width: 90%;
+    max-width: 700px;
+    padding: 20px;
+    margin: 20px auto;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Center the repo list properly */
 .repo-list {
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: center; /* Center the cards horizontally */
+    justify-content: center; /* Optional: Center cards vertically if needed */
+    width: 100%; /* Ensure it takes full width */
     padding-bottom: 50px;
 }
 
@@ -47,12 +72,15 @@ body {
     border-radius: 20px;
     padding: 20px;
     margin: 10px 0;
-    width: 80%;
+    width: 100%; /* Make it responsive */
     max-width: 600px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     justify-content: space-between;
+    flex-wrap: nowrap; /* Ensure items don't wrap */
+    box-sizing: border-box;
 }
 
+/* Keep the image and text aligned properly */
 .repo-icon {
     width: 100px;
     height: 100px;
@@ -66,21 +94,25 @@ body {
     image-rendering: pixelated;
 }
 
-.repo-info {
-    flex: 1;
-    margin-right: 60px;
+.repo-name {
+    font-weight: bold;
+    color: var(--primary-text);
+    text-align: left; /* Align repo name to the left */
 }
 
-.repo-name {
-    font-size: 1.5rem;
-    margin: 0;
+.repo-info {
+    flex: 1;
+    margin-right: 20px; /* Adjust margin to allow space for the checkbox */
+    text-align: left; /* Align text to the left */
 }
 
 .repo-description {
     font-size: 1rem;
     color: #666;
+    text-align: left; /* Align description to the left */
 }
 
+/* Button Styling */
 .add-button {
     width: 50px;
     height: 50px;
@@ -94,6 +126,7 @@ body {
     font-size: 32px;
     cursor: pointer;
     transition: background-color 0.3s ease;
+    flex-shrink: 0;
 }
 
 .add-button.checked {
@@ -101,7 +134,7 @@ body {
 }
 
 .add-button svg {
-    fill: white; /* Ensure the checkmark is white */
+    fill: white;
 }
 
 /* Modal Styles */
@@ -121,7 +154,7 @@ body {
     margin: 5% auto;
     padding: 20px;
     border-radius: 20px;
-    width: 60%;
+    width: 80%; /* Adjust for better responsiveness */
     max-width: 800px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     text-align: center;
@@ -138,32 +171,20 @@ body {
     color: red;
 }
 
-/* Centering and styling for modal title and input */
 .modal-title {
     font-size: 1.8rem;
     margin-bottom: 20px;
     text-align: center;
 }
 
-input[type="text"] {
-    width: 100%;
-    padding: 10px;
-    margin: 10px 0;
-    box-sizing: border-box;
-    border-radius: 5px;
-    font-size: 1rem;
-    background-color: var(--secondary-bg); /* Use secondary background */
-    color: var(--primary-text); /* Ensure text color matches the mode */
-}
-
-/* Centering and consistent grid for icons */
+/* Icon grid */
 .icon-selector {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
     gap: 10px;
-    justify-content: center; /* Center the entire grid */
+    justify-content: center;
     margin-top: 20px;
-    justify-items: center; /* Center the icons themselves */
+    justify-items: center;
 }
 
 .icon {
@@ -172,8 +193,8 @@ input[type="text"] {
     border-radius: var(--icon-border-radius);
     cursor: pointer;
     transition: all 0.3s ease;
-    box-sizing: border-box; /* Ensure padding and border are included in size */
-    border: 3px solid transparent; /* Prevent shifting by adding transparent border */
+    box-sizing: border-box;
+    border: 3px solid transparent;
 }
 
 .icon.selected {
@@ -194,13 +215,13 @@ input[type="text"] {
     left: 50%;
     transform: translateX(-50%);
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 5;
 }
 
 .complete-selection-button:hover {
     background-color: limegreen;
 }
 
-/* Download button inside modal, centered */
 .download-button {
     background-color: var(--button-bg);
     color: var(--button-text);
@@ -215,4 +236,42 @@ input[type="text"] {
 
 .download-button:hover {
     background-color: limegreen;
+}
+
+input[type="text"] {
+    width: calc(100% - 20px); /* Ensure the input stays inside the modal padding */
+    padding: 12px;
+    border: 2px solid #ddd;
+    border-radius: 15px;
+    font-size: 16px;
+    margin-bottom: 10px;
+    transition: border-color 0.3s;
+    text-align: center;
+    background-color: var(--secondary-bg);
+    color: var(--primary-text);
+    box-sizing: border-box; /* Ensure padding is part of the width */
+}
+
+.copyable-textbox {
+    width: calc(100%) !important;
+}
+
+input[type="text"]:focus {
+    border-color: var(--accent-color);
+    outline: none;
+}
+
+video {
+    width: 100%;
+    border-radius: 15px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 1;
+}
+
+.visible {
+    opacity: 1;
+}
+
+h1 {
+    align-self: center;
 }

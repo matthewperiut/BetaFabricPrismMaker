@@ -90,7 +90,8 @@ async function handler(req: Request): Promise<Response> {
                 status: 404,
             });
         }
-
+    } else if (url.pathname === "/favicon.ico") {
+        return await serveFile(req, "./public/favicon.ico");
     } else {
         return new Response("404 Not Found", { status: 404 });
     }
