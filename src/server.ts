@@ -1,6 +1,6 @@
 import { serveFile } from "https://deno.land/std@0.212.0/http/file_server.ts";
 import { serve } from "https://deno.land/std@0.212.0/http/server.ts";
-import { exists } from "https://deno.land/std@0.146.0/fs/mod.ts";
+import { exists } from "https://deno.land/std@0.212.0/fs/mod.ts";
 import { getModHTML } from "./card.ts"
 import { createPrismInstance } from "./create.ts";
 
@@ -42,7 +42,7 @@ async function handler(req: Request): Promise<Response> {
         // console.log("Selected Icon Number:", icon);
         // console.log("Selected Mods:", mods);
 
-        let a = await createPrismInstance(mods, icon, instanceName);
+        const a = await createPrismInstance(mods, icon, instanceName);
         // Return the generated URL in the response
         return new Response(JSON.stringify({ message: a }), {
             headers: { "Content-Type": "application/json" },
@@ -58,7 +58,7 @@ async function handler(req: Request): Promise<Response> {
             return await serveFile(req, localPath);
         }
 
-        let ending = u.pathname.split('/').pop();
+        const ending = u.pathname.split('/').pop();
         if (ending) {
             const folderPath = `./instances/${ending}`;
 
@@ -88,7 +88,7 @@ async function handler(req: Request): Promise<Response> {
         });
     } else if (url.pathname === "/getName") {
         const { id } = await req.json();
-        let path = await findFirstZipFileInFolder("./instances/" + id);
+        const path = await findFirstZipFileInFolder("./instances/" + id);
         if (path) {
             return new Response(JSON.stringify({ message: path.split('/').pop() }), {
                 headers: { "Content-Type": "application/json" },
@@ -107,7 +107,7 @@ async function handler(req: Request): Promise<Response> {
     }
 }
 
-function replaceAll(str, find, replace) {
+function replaceAll(str: string, find: string, replace: string) {
     return str.replace(new RegExp(find, 'g'), replace);
 }
 

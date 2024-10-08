@@ -1,1 +1,1 @@
-deno run --allow-all server.ts
+deno run --allow-all src/server.ts

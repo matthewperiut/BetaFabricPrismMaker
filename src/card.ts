@@ -1,12 +1,10 @@
-import { downloadLatestJar, downloadLatestModrinthJar } from "./download.ts";
-
 export interface ModInfo {
     id: string;
     title?: string;
     description: string;
     icon: string;
     repo: string;
-    dependencies?: Record<string, any>;
+    dependencies?: Record<string, string>;
     api?: boolean
     branch: string;
     modrinth_id?: string;
@@ -62,14 +60,15 @@ const fetchModInfo = async (entry: ModEntry): Promise<ModInfo> => {
         if (response.ok) {
             const data = await response.json();
             const iconUrl = `https://raw.githubusercontent.com/${entry.repo}/${entry.branch}/src/main/resources/${data.icon}`;
-            let result: ModInfo = {
+            
+            const result: ModInfo = {
                 id: data.id,
                 title: data.name,
                 description: data.description.length > 150 ? data.description.slice(0,147) + "..." : data.description,
                 icon: iconUrl,
                 repo: entry.repo,
-                dependencies: data.hasOwnProperty("depends") ? data.depends : {},
-                api: data.custom ? data.custom.hasOwnProperty("modmenu:api") : false,
+                dependencies: Object.prototype.hasOwnProperty.call(data, "depends") ? data.depends : {},
+                api: data.custom ? Object.prototype.hasOwnProperty.call(data.custom, "modmenu:api") : false,
                 branch: entry.branch,
                 modrinth_id: entry.modrinth_id,
                 hide: entry.hide
@@ -106,7 +105,7 @@ export function getModHTML(): string {
 
         mods.forEach(element => {
             if (!element.api && element.hide == undefined && element.title != undefined) {
-                let adjusted_title = element.title.replace(/(?<!^)([A-Z](?![A-Z\s]))/g, ' $1');
+                const adjusted_title = element.title.replace(/(?<!^)([A-Z](?![A-Z\s]))/g, ' $1');
                 result += '<div class="repo-card">' +
                     '<img src="' + element.icon + '" class="repo-icon" alt="' + adjusted_title + ' icon">' +
                     '<div class="repo-info">' +

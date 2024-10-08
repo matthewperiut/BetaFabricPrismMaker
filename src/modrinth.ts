@@ -11,9 +11,8 @@ export const downloadModrinth = async (modrinth_id: string) => {
         const fileData = data[0].files[0];
         console.log(fileData.url)
       }
-      catch (err) {
+      catch (_err: unknown) {
         console.log(`${modrinth_id} -> Not Available (or Unknown error)`);
-        // console.error(err); // Uncomment for debugging purposes
       }
   };
   

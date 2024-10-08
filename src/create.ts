@@ -1,9 +1,6 @@
+import { ensureDir, exists, copy, expandGlob } from "https://deno.land/std@0.224.0/fs/mod.ts";
 import { downloadLatestBabric, downloadLatestJar, downloadLatestModrinthJar } from "./download.ts";
 import { ModInfo, mods } from "./card.ts";
-import { ensureDir, exists } from "https://deno.land/std@0.110.0/fs/mod.ts";
-import { copy, move } from "https://deno.land/std@0.110.0/fs/mod.ts";
-import { join } from "https://deno.land/std@0.110.0/path/mod.ts";
-import { expandGlob } from "https://deno.land/std@0.110.0/fs/mod.ts"; // To find all .jar files in a directory
 
 // Utility function to generate a random 6-character alphanumeric string
 function generateRandomString(length: number): string {
@@ -17,7 +14,7 @@ function generateRandomString(length: number): string {
 }
 
 // Create Prism Instance
-export async function createPrismInstance(mod_ids: string[], icon_id: Number, instance_name: string): Promise<string> {
+export async function createPrismInstance(mod_ids: string[], icon_id: number, instance_name: string): Promise<string> {
     // Ensure ./instance folder exists
     await ensureDir('./instances');
 
@@ -44,7 +41,7 @@ export async function createPrismInstance(mod_ids: string[], icon_id: Number, in
     return randomStr;
 }
 
-function getInstanceCfg(icon_number: Number): string {
+function getInstanceCfg(icon_number: number): string {
     return "InstanceType=OneSix\n" +
     "name=babric b1.7.3\n" +
     "iconKey=betaicon_" + icon_number + "\n";
@@ -85,7 +82,7 @@ function getModsAndDependencies(mod_ids: string[]): ModInfo[] {
     return result;
 }
 
-async function generateFiles(mod_ids: string[], icon_id: Number, instance_name: string, location: string) {
+async function generateFiles(mod_ids: string[], icon_id: number, instance_name: string, location: string) {
     // Create a new ModInfo[] by matching mod_ids to ModInfo.id in the array mods
     mod_ids.push("stationapi");
     mod_ids.push("gcapi3");
@@ -112,9 +109,15 @@ async function generateFiles(mod_ids: string[], icon_id: Number, instance_name: 
 
     // Unzip the downloaded prism instance
     const zipExtractedPath = `./instances/${location}/${instance_name}`;
-    await Deno.run({
-        cmd: ["unzip", zipDestPath, "-d", zipExtractedPath]
-    }).status();
+    try {
+        const command = new Deno.Command("unzip", {args: [zipDestPath, "-d", zipExtractedPath]});
+        const { success } = await command.output();
+        console.log("unzip successful: " + success);
+    } catch (e) {
+        console.log(e);
+        console.warn("Install `zip` on your machine.")
+        return;
+    }
 
     // Copy ./public/img/${icon_id}.png to ./instances/${location}/${instance_name}/${icon_id}.png
     const iconSrcPath = `./public/img/betaicon_${icon_id}.png`;
@@ -139,7 +142,7 @@ async function generateFiles(mod_ids: string[], icon_id: Number, instance_name: 
     // end
 
     for (let i = 0; i < selectedMods.length; i++) {
-        let m = selectedMods[i];
+        const m = selectedMods[i];
         if (m.modrinth_id != undefined) {
             await downloadLatestModrinthJar(m.id, m.modrinth_id);
         } else {
@@ -153,10 +156,15 @@ async function generateFiles(mod_ids: string[], icon_id: Number, instance_name: 
     }
 
     // Zip everything back into the destination zip file
-    await Deno.run({
-        cmd: ["zip", "-r", `../${instance_name}.zip`, "."],
-        cwd: zipExtractedPath
-    }).status();
+    try {
+        const command = new Deno.Command("zip", {args: ["-r", `../${instance_name}.zip`, "."], cwd: zipExtractedPath});
+        const { success } = await command.output();
+        console.log("zip successful: " + success);
+    } catch (e) {
+        console.log(e);
+        console.warn("Install `zip` on your machine.")
+        return;
+    }
 
     // Clean up the extracted folder
     await Deno.remove(zipExtractedPath, { recursive: true });

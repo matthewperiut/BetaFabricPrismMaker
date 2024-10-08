@@ -1,5 +1,4 @@
-import { ensureDir, exists } from "https://deno.land/std/fs/mod.ts";
-import { ModInfo } from "./card.ts"
+import { ensureDir, exists } from "https://deno.land/std@0.224.0/fs/mod.ts";
 
 const ONE_DAY_MS = 24 * 60 * 60 * 1000;
 
@@ -92,8 +91,10 @@ export async function downloadLatestModrinthJar(modid: string, modrinth_id: stri
     await writeTimestamp(downloadFolder);
 
     console.log(`Downloaded '${fileName}' to ${downloadPath}`);
-  } catch (err) {
-    console.error(`Error downloading from Modrinth (${modrinth_id}): ${err.message}`);
+  } catch (err: unknown) {
+    if (err instanceof Error) {
+      console.error(`Error downloading from Modrinth (${modrinth_id}): ${err.message}`);
+    }
   }
 }
 
