@@ -44,7 +44,9 @@ export async function createPrismInstance(mod_ids: string[], icon_id: number, in
 function getInstanceCfg(icon_number: number): string {
     return "InstanceType=OneSix\n" +
     "name=babric b1.7.3\n" +
-    "iconKey=betaicon_" + icon_number + "\n";
+    "iconKey=betaicon_" + icon_number + "\n" +
+    "JvmArgs=\"-Dapple.awt.application.appearance=system\"\n" +
+    "OverrideJavaArgs=true";
 }
 
 function getModsAndDependencies(mod_ids: string[]): ModInfo[] {
