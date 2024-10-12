@@ -22,6 +22,7 @@ const mod_entries: ModEntry[] = [
     { repo: "calmilamsy/ModMenu", branch: "b1.7.3", modrinth_id: "modmenu-beta" },
     { repo: "matthewperiut/accessory-api", branch: "master", modrinth_id: "accessory-api" },
     { repo: "matthewperiut/aether-fabric-b1.7.3", branch: "master", modrinth_id: "aether-stapi" },
+    { repo: "KydZombie/voxel-shapes", branch: "master"},
     // SERVER COMPAT NEEDED { repo: "DanyGames2014/Tropicraft", branch: "master", modrinth_id: "tropicraft-stationapi" },
     // SERVER LOGIN COMPAT, ACCESSES SCREEN { repo: "kozibrodka/MoCreatures", branch: "master" },
     { repo: "matthewperiut/spc-babric", branch: "master", modrinth_id: "spc-babric" },
