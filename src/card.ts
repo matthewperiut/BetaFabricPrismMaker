@@ -25,7 +25,7 @@ const mod_entries: ModEntry[] = [
     { repo: "KydZombie/voxel-shapes", branch: "master"},
     // SERVER COMPAT NEEDED { repo: "DanyGames2014/Tropicraft", branch: "master", modrinth_id: "tropicraft-stationapi" },
     // SERVER LOGIN COMPAT, ACCESSES SCREEN { repo: "kozibrodka/MoCreatures", branch: "master" },
-    { repo: "matthewperiut/spc-babric", branch: "master", modrinth_id: "spc-babric" },
+    { repo: "matthewperiut/retrocommands", branch: "master", modrinth_id: "retrocommands" },
     { repo: "paulevsGitch/BHCreative", branch: "stapi-2.0", modrinth_id: "bh-creative" },
     { repo: "paulevsGitch/BetterWeather", branch: "main", modrinth_id: "betterweather" },
     { repo: "matthewperiut/babric-sprint", branch: "master" },
