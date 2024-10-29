@@ -7,6 +7,7 @@
     --button-text: #ffffff;
     --icon-border-radius: 10px;
     --selected-border-color: limegreen;
+    --orange: #ffa748;
 }
 
 /* Dark Mode */
@@ -18,6 +19,7 @@
         --button-bg: #1a73e8;
         --button-text: #ffffff;
         --selected-border-color: limegreen;
+        --orange: #c5842f;
     }
 }
 
@@ -80,6 +82,21 @@ body {
     box-sizing: border-box;
 }
 
+.halloween {
+    display: flex;
+    align-items: center;
+    border-radius: 20px;
+    padding: 20px;
+    margin: 10px 0;
+    width: 100%; /* Make it responsive */
+    max-width: 600px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    justify-content: space-between;
+    flex-wrap: nowrap; /* Ensure items don't wrap */
+    box-sizing: border-box;
+    background-color: var(--orange)  !important;
+}
+
 /* Keep the image and text aligned properly */
 .repo-icon {
     width: 100px;
@@ -108,7 +125,7 @@ body {
 
 .repo-description {
     font-size: 1rem;
-    color: #666;
+    color: var(--primary-text);
     text-align: left; /* Align description to the left */
 }
 

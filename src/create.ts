@@ -1,6 +1,15 @@
-import { ensureDir, exists, copy, expandGlob } from "https://deno.land/std@0.224.0/fs/mod.ts";
+import { ensureDir, exists, copy, expandGlob, walk } from "https://deno.land/std@0.224.0/fs/mod.ts";
+import { join, dirname, relative } from "https://deno.land/std@0.224.0/path/mod.ts";
 import { downloadLatestBabric, downloadLatestJar, downloadLatestModrinthJar } from "./download.ts";
 import { ModInfo, mods } from "./card.ts";
+import {
+  BlobReader,
+  BlobWriter,
+  ZipReader,
+  ZipWriter,
+  Uint8ArrayReader,
+  Uint8ArrayWriter,
+} from "https://deno.land/x/zipjs/index.js";
 
 // Utility function to generate a random 6-character alphanumeric string
 function generateRandomString(length: number): string {
@@ -84,7 +93,46 @@ function getModsAndDependencies(mod_ids: string[]): ModInfo[] {
     return result;
 }
 
-async function generateFiles(mod_ids: string[], icon_id: number, instance_name: string, location: string) {
+async function unzipFile(zipFilePath: string, destDirectory: string) {
+    const zipData = await Deno.readFile(zipFilePath);
+    const zipBlob = new Blob([zipData], { type: 'application/zip' });
+    const zipReader = new ZipReader(new BlobReader(zipBlob));
+    const entries = await zipReader.getEntries();
+  
+    for (const entry of entries) {
+      const destPath = join(destDirectory, entry.filename);
+      if (entry.directory) {
+        await ensureDir(destPath);
+      } else {
+        await ensureDir(dirname(destPath));
+        const data = await entry.getData(new Uint8ArrayWriter());
+        await Deno.writeFile(destPath, data);
+      }
+    }
+    await zipReader.close();
+  }
+  
+  async function zipDirectory(sourceDirectory: string, zipFilePath: string) {
+    const zipFileWriter = new BlobWriter("application/zip");
+    const zipWriter = new ZipWriter(zipFileWriter);
+  
+    for await (const entry of walk(sourceDirectory, { includeDirs: false })) {
+      if (entry.isFile) {
+        const relativePath = relative(sourceDirectory, entry.path);
+        const fileData = await Deno.readFile(entry.path);
+        const reader = new Uint8ArrayReader(fileData);
+        await zipWriter.add(relativePath, reader);
+      }
+    }
+  
+    await zipWriter.close();
+  
+    const zipBlob = await zipFileWriter.getData();
+    const zipUint8Array = new Uint8Array(await zipBlob.arrayBuffer());
+    await Deno.writeFile(zipFilePath, zipUint8Array);
+  }
+
+  async function generateFiles(mod_ids: string[], icon_id: number, instance_name: string, location: string) {
     // Create a new ModInfo[] by matching mod_ids to ModInfo.id in the array mods
     mod_ids.push("stationapi");
     mod_ids.push("gcapi3");
@@ -92,7 +140,30 @@ async function generateFiles(mod_ids: string[], icon_id: number, instance_name: 
     mod_ids.push("mojangfixstationapi");
     mod_ids.push("stapi-fast-intro");
     mod_ids.push("unitweaks");
-    mod_ids.push("glassnetworking")
+    mod_ids.push("glassnetworking");
+    mod_ids.push("fixhandshakepacket");
+
+    let hmi = false;
+    let ami = false;
+
+    // Check for presence of 'hmifabric' and 'alwaysmoreitems'
+    for (let i = 0; i < mod_ids.length; i++) {
+        if (mod_ids[i] === "hmifabric") {
+            hmi = true;
+        }
+        if (mod_ids[i] === "alwaysmoreitems") {
+            ami = true;
+        }
+    }
+
+    // Remove 'hmifabric' if both 'hmi' and 'ami' are present
+    if (hmi && ami) {
+        const index = mod_ids.indexOf("hmifabric");
+        if (index !== -1) {
+            mod_ids.splice(index, 1);
+        }
+    }
+
     const selectedMods: ModInfo[] = getModsAndDependencies(mod_ids);
 
     // stored as ./temp/prism/babric-b1.7.3.zip
@@ -111,15 +182,7 @@ async function generateFiles(mod_ids: string[], icon_id: number, instance_name: 
 
     // Unzip the downloaded prism instance
     const zipExtractedPath = `./instances/${location}/${instance_name}`;
-    try {
-        const command = new Deno.Command("unzip", {args: [zipDestPath, "-d", zipExtractedPath]});
-        const { success } = await command.output();
-        console.log("unzip successful: " + success);
-    } catch (e) {
-        console.log(e);
-        console.warn("Install `zip` on your machine.")
-        return;
-    }
+    await unzipFile(zipDestPath, zipExtractedPath);
 
     // Copy ./public/img/${icon_id}.png to ./instances/${location}/${instance_name}/${icon_id}.png
     const iconSrcPath = `./public/img/betaicon_${icon_id}.png`;
@@ -145,6 +208,11 @@ async function generateFiles(mod_ids: string[], icon_id: number, instance_name: 
 
     for (let i = 0; i < selectedMods.length; i++) {
         const m = selectedMods[i];
+        // to be deprecated after pr pulled
+        if (m.id == "zeasons") {
+            await copy("./adjustments/Zeasons-0.1.0-SNAPSHOT.jar", `${modsDir}/Zeasons-0.1.0-SNAPSHOT.jar`)
+            continue;
+        }
         if (m.modrinth_id != undefined) {
             await downloadLatestModrinthJar(m.id, m.modrinth_id);
         } else {
@@ -158,15 +226,8 @@ async function generateFiles(mod_ids: string[], icon_id: number, instance_name: 
     }
 
     // Zip everything back into the destination zip file
-    try {
-        const command = new Deno.Command("zip", {args: ["-r", `../${instance_name}.zip`, "."], cwd: zipExtractedPath});
-        const { success } = await command.output();
-        console.log("zip successful: " + success);
-    } catch (e) {
-        console.log(e);
-        console.warn("Install `zip` on your machine.")
-        return;
-    }
+    const outputZipFilePath = join(dirname(zipExtractedPath), `${instance_name}.zip`);
+    await zipDirectory(zipExtractedPath, outputZipFilePath);
 
     // Clean up the extracted folder
     await Deno.remove(zipExtractedPath, { recursive: true });

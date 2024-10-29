@@ -33,24 +33,49 @@ export async function downloadLatestBabric(repo: string, folder_name: string): P
 }
 
 export async function downloadLatestJar(modid: string, repo: string): Promise<void> {
-  const url = `https://api.github.com/repos/${repo}/releases/latest`;
   const downloadFolder = `./temp/${modid}`;
-  
+
   if (await isRecentDownload(downloadFolder)) {
     console.log(`Recent download exists for ${modid}, skipping download.`);
     return;
   }
-  
-  const response = await fetch(url);
-  if (!response.ok) {
-    throw new Error(`Failed to fetch latest release from ${repo}`);
+
+  let releaseData;
+  let url = `https://api.github.com/repos/${repo}/releases/latest`;
+
+  try {
+    let response = await fetch(url);
+    
+    if (!response.ok) {
+      console.warn(`'latest' endpoint failed, trying all releases endpoint instead`);
+      url = `https://api.github.com/repos/${repo}/releases`;
+      response = await fetch(url);
+      
+      if (!response.ok) {
+        throw new Error(`Failed to fetch releases from ${repo}`);
+      }
+      
+      const releases = await response.json();
+      if (releases.length === 0) {
+        throw new Error("No releases found.");
+      }
+      
+      releaseData = releases[0];
+    } else {
+      releaseData = await response.json();
+    }
+  } catch (error: any) {
+    console.error(`Error fetching release: ${error.message}`);
+    throw error;
   }
-  
-  const releaseData = await response.json();
-  const jarAsset = releaseData.assets.find((asset: any) => asset.name.endsWith(".jar"));
-  
+
+  // Filter assets for .jar files without "sources" in the name
+  const jarAsset = releaseData.assets.find(
+    (asset: any) => asset.name.endsWith(".jar") && !asset.name.toLowerCase().includes("sources")
+  );
+
   if (!jarAsset) {
-    throw new Error(`Could not find any '.jar' file in latest release assets.`);
+    throw new Error(`Could not find any '.jar' file in release assets that does not contain 'sources' in the name.`);
   }
 
   await ensureDir(downloadFolder);
@@ -58,7 +83,7 @@ export async function downloadLatestJar(modid: string, repo: string): Promise<vo
 
   await downloadFile(jarAsset.browser_download_url, downloadPath);
   await writeTimestamp(downloadFolder);
-  
+
   console.log(`Downloaded '${jarAsset.name}' to ${downloadPath}`);
 }
 
@@ -80,7 +105,7 @@ export async function downloadLatestModrinthJar(modid: string, modrinth_id: stri
     }
 
     const data = await response.json();
-    const fileData = data[0].files[0]; // Assuming the first file is the one to download
+    const fileData = data[0].files[0];
     const downloadUrl = fileData.url;
     const fileName = fileData.filename || "modrinth-mod.jar";
 

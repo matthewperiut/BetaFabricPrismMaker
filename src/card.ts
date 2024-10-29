@@ -9,6 +9,7 @@ export interface ModInfo {
     branch: string;
     modrinth_id?: string;
     hide?: boolean;
+    halloween?: boolean;
 }
 
 interface ModEntry {
@@ -16,13 +17,17 @@ interface ModEntry {
     branch: string;
     modrinth_id?: string;
     hide?: boolean;
+    halloween?: boolean;
 }
 
 const mod_entries: ModEntry[] = [
+    { repo: "telvarost/TelsDrinks-StationAPI", branch: "main", halloween: true },
+    { repo: "Atilist/SpookySquashLands", branch: "master", halloween: true },
+    { repo: "Zekromaster/Zeasons", branch: "trunk", halloween: true },
+    { repo: "paulevsGitch/PumpkinMoon", branch: "main", halloween: true },
     { repo: "calmilamsy/ModMenu", branch: "b1.7.3", modrinth_id: "modmenu-beta" },
     { repo: "matthewperiut/accessory-api", branch: "master", modrinth_id: "accessory-api" },
     { repo: "matthewperiut/aether-fabric-b1.7.3", branch: "master", modrinth_id: "aether-stapi" },
-    { repo: "KydZombie/voxel-shapes", branch: "master"},
     // SERVER COMPAT NEEDED { repo: "DanyGames2014/Tropicraft", branch: "master", modrinth_id: "tropicraft-stationapi" },
     // SERVER LOGIN COMPAT, ACCESSES SCREEN { repo: "kozibrodka/MoCreatures", branch: "master" },
     { repo: "matthewperiut/retrocommands", branch: "master", modrinth_id: "retrocommands" },
@@ -31,6 +36,7 @@ const mod_entries: ModEntry[] = [
     { repo: "matthewperiut/babric-sprint", branch: "master" },
     { repo: "telvarost/MojangFix-StationAPI", branch: "stationapi-config", modrinth_id: "mojangfix-stationapi-edition", hide: true },
     { repo: "telvarost/InventoryTweaks-StationAPI", branch: "main", modrinth_id: "inventorytweaks" },
+    { repo: "Glass-Series/Always-More-Items", branch: "master", modrinth_id: "always-more-items" },
     { repo: "calmilamsy/HowManyItems-Fabric-Unofficial", branch: "master", modrinth_id: "howmanyitems-fabric" },
     { repo: "DanyGames2014/spawneggs", branch: "master", modrinth_id: "spawn-eggs" },
     { repo: "matthewperiut/thirdpersonfix-fabric-b1.7.3", branch: "master", modrinth_id: "thirdpersonfix-babric" },
@@ -48,7 +54,9 @@ const mod_entries: ModEntry[] = [
     // SERVER COMPAT NEEDED { repo: "telvarost/WhatAreYouScoring-StationAPI", branch: "main", modrinth_id: "whatareyouscoring-stationapi" },
     { repo: "telvarost/CreativeEditorWands-StationAPI", branch:"main",modrinth_id:"creativeeditorwands-stationapi"},
     { repo: "matthewperiut/crates-fabric-b1.7.3", branch:"master", modrinth_id:"crate"},
-    { repo: "calmilamsy/Glass-Networking", branch:"master", modrinth_id:"glass-networking", hide: true}
+    { repo: "calmilamsy/Glass-Networking", branch:"master", modrinth_id:"glass-networking", hide: true},
+    { repo: "KydZombie/voxel-shapes", branch: "master", hide: true},
+    { repo: "matthewperiut/fixhandshakepacket", branch: "master", hide: true }
     //{repo:"",branch:"",modrinth_id:""}
 ];
 
@@ -72,7 +80,8 @@ const fetchModInfo = async (entry: ModEntry): Promise<ModInfo> => {
                 api: data.custom ? Object.prototype.hasOwnProperty.call(data.custom, "modmenu:api") : false,
                 branch: entry.branch,
                 modrinth_id: entry.modrinth_id,
-                hide: entry.hide
+                hide: entry.hide,
+                halloween: entry.halloween
             };
 
             const keysToDelete = ["stationapi", "minecraft", "fabricloader"];
@@ -104,11 +113,26 @@ export function getModHTML(): string {
     if (cached_result === "") {
         let result = "";
 
+        /*
+        result += result += '<div class="repo-card">' +
+        '<img src="' + element.icon + '" class="repo-icon" alt="' + adjusted_title + ' icon">' +
+        '<div class="repo-info">' +
+        '<h2 class="repo-name">' + adjusted_title + '</h2>' +
+        '<p class="repo-description">' + element.description + '</p>' +
+        '</div>' +
+        '<button class="add-button" onclick="toggleButton(this, \'' + element.id + '\')">+</button>' +
+        '</div>';*/
+
         mods.forEach(element => {
             if (!element.api && element.hide == undefined && element.title != undefined) {
                 const adjusted_title = element.title.replace(/(?<!^)([A-Z](?![A-Z\s]))/g, ' $1');
-                result += '<div class="repo-card">' +
-                    '<img src="' + element.icon + '" class="repo-icon" alt="' + adjusted_title + ' icon">' +
+                result
+                if (element.halloween) {
+                    result += '<div class="halloween">';
+                } else {
+                    result += '<div class="repo-card">';
+                }
+                    result += '<img src="' + element.icon + '" class="repo-icon" alt="' + adjusted_title + ' icon">' +
                     '<div class="repo-info">' +
                     '<h2 class="repo-name">' + adjusted_title + '</h2>' +
                     '<p class="repo-description">' + element.description + '</p>' +
