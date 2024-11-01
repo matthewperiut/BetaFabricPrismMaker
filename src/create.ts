@@ -142,6 +142,7 @@ async function unzipFile(zipFilePath: string, destDirectory: string) {
     mod_ids.push("unitweaks");
     mod_ids.push("glassnetworking");
     mod_ids.push("fixhandshakepacket");
+    mod_ids.push("voxelshapes");
 
     let hmi = false;
     let ami = false;
@@ -211,6 +212,11 @@ async function unzipFile(zipFilePath: string, destDirectory: string) {
         // to be deprecated after pr pulled
         if (m.id == "zeasons") {
             await copy("./adjustments/Zeasons-0.1.0-SNAPSHOT.jar", `${modsDir}/Zeasons-0.1.0-SNAPSHOT.jar`)
+            continue;
+        }
+        // to be deprecated after babric sprint compat
+        if (m.id == "unitweaks") {
+            await copy("./adjustments/UniTweaks-0.15.0.jar", `${modsDir}/UniTweaks-0.15.0.jar`)
             continue;
         }
         if (m.modrinth_id != undefined) {

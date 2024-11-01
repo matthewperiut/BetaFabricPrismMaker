@@ -115,7 +115,7 @@
         }
 
         function boo() {
-            window.location.replace(document.location.origin + "/share/boo");
+            window.location.href = (document.location.origin + "/share/boo");
         }
 
         // Function to handle the download process
@@ -153,7 +153,7 @@
                     }
                 })
                 .then(data => {
-                    window.location.replace(document.location.origin + "/share/" + data.message);
+                    window.location.href = (document.location.origin + "/share/" + data.message);
                 })
                 .catch(error => {
                     console.error('Error:', error);
