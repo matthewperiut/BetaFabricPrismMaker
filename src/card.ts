@@ -9,7 +9,6 @@ export interface ModInfo {
     branch: string;
     modrinth_id?: string;
     hide?: boolean;
-    halloween?: boolean;
 }
 
 interface ModEntry {
@@ -17,15 +16,9 @@ interface ModEntry {
     branch: string;
     modrinth_id?: string;
     hide?: boolean;
-    halloween?: boolean;
 }
 
 const mod_entries: ModEntry[] = [
-    { repo: "telvarost/TelsDrinks-StationAPI", branch: "main", halloween: true },
-    { repo: "Atilist/SpookySquashLands", branch: "master", halloween: true },
-    { repo: "Zekromaster/Zeasons", branch: "trunk", halloween: true },
-    { repo: "paulevsGitch/PumpkinMoon", branch: "main", halloween: true },
-    { repo: "KydZombie/crimson-forest", branch: "master", halloween: true },
     { repo: "calmilamsy/ModMenu", branch: "b1.7.3", modrinth_id: "modmenu-beta" },
     { repo: "matthewperiut/accessory-api", branch: "master", modrinth_id: "accessory-api" },
     { repo: "matthewperiut/aether-fabric-b1.7.3", branch: "master", modrinth_id: "aether-stapi" },
@@ -43,6 +36,11 @@ const mod_entries: ModEntry[] = [
     { repo: "Glass-Series/Always-More-Items", branch: "master", modrinth_id: "always-more-items" },
     { repo: "calmilamsy/HowManyItems-Fabric-Unofficial", branch: "master", modrinth_id: "howmanyitems-fabric" },
     { repo: "DanyGames2014/spawneggs", branch: "master", modrinth_id: "spawn-eggs" },
+    { repo: "telvarost/TelsDrinks-StationAPI", branch: "main" },
+    { repo: "Atilist/SpookySquashLands", branch: "master" },
+    { repo: "Zekromaster/Zeasons", branch: "trunk" },
+    { repo: "paulevsGitch/PumpkinMoon", branch: "main" },
+    { repo: "KydZombie/crimson-forest", branch: "master" },
     { repo: "matthewperiut/thirdpersonfix-fabric-b1.7.3", branch: "master", modrinth_id: "thirdpersonfix-babric" },
     { repo: "matthewperiut/midastouch-fabric-b1.7.3", branch: "master" },
     { repo: "ModificationStation/StationAPI", branch: "master", modrinth_id: "stationapi", hide: true },
@@ -86,8 +84,7 @@ const fetchModInfo = async (entry: ModEntry): Promise<ModInfo> => {
                 api: data.custom ? Object.prototype.hasOwnProperty.call(data.custom, "modmenu:api") : false,
                 branch: entry.branch,
                 modrinth_id: entry.modrinth_id,
-                hide: entry.hide,
-                halloween: entry.halloween
+                hide: entry.hide
             };
 
             const keysToDelete = ["stationapi", "minecraft", "fabricloader"];
@@ -132,12 +129,7 @@ export function getModHTML(): string {
         mods.forEach(element => {
             if (!element.api && element.hide == undefined && element.title != undefined) {
                 const adjusted_title = element.title.replace(/(?<!^)([A-Z](?![A-Z\s]))/g, ' $1');
-                result
-                if (element.halloween) {
-                    result += '<div class="halloween">';
-                } else {
                     result += '<div class="repo-card">';
-                }
                     result += '<img src="' + element.icon + '" class="repo-icon" alt="' + adjusted_title + ' icon">' +
                     '<div class="repo-info">' +
                     '<h2 class="repo-name">' + adjusted_title + '</h2>' +
