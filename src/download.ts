@@ -57,7 +57,7 @@ export async function downloadLatestJar(modid: string, repo: string): Promise<vo
       
       const releases = await response.json();
       if (releases.length === 0) {
-        throw new Error("No releases found.");
+        throw new Error("No releases found for " + repo);
       }
       
       releaseData = releases[0];

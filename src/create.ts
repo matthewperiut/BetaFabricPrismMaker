@@ -141,8 +141,8 @@ async function unzipFile(zipFilePath: string, destDirectory: string) {
     mod_ids.push("stapi-fast-intro");
     mod_ids.push("unitweaks");
     mod_ids.push("glassnetworking");
-    mod_ids.push("fixhandshakepacket");
     mod_ids.push("voxelshapes");
+    mod_ids.push("retroauth");
 
     let hmi = false;
     let ami = false;
@@ -168,7 +168,7 @@ async function unzipFile(zipFilePath: string, destDirectory: string) {
     const selectedMods: ModInfo[] = getModsAndDependencies(mod_ids);
 
     // stored as ./temp/prism/babric-b1.7.3.zip
-    await downloadLatestBabric("Glass-Series/babric-prism-instance", "prism");
+    await downloadLatestBabric("babric/prism-instance", "prism");
 
     // Create folder if it doesn't exist, "./instances"
     await ensureDir('./instances');
@@ -199,24 +199,14 @@ async function unzipFile(zipFilePath: string, destDirectory: string) {
     const modsDir = `${zipExtractedPath}/.minecraft/mods`;
     await ensureDir(modsDir);
 
-    // gcapi2, TO BE DEPRECATED
-    await copy("./adjustments/GlassConfigAPI-2.0.2.jar", `${modsDir}/GlassConfigAPI-2.0.2.jar`);
-    // end gcapi2
-
     // Keep minecraft as vanilla-looking as possible, disable intrusive mod customizations
     await copy("./adjustments/config", `${zipExtractedPath}/.minecraft/config`);
     // end
 
     for (let i = 0; i < selectedMods.length; i++) {
         const m = selectedMods[i];
-        // to be deprecated after pr pulled
-        if (m.id == "zeasons") {
-            await copy("./adjustments/Zeasons-0.1.0-SNAPSHOT.jar", `${modsDir}/Zeasons-0.1.0-SNAPSHOT.jar`)
-            continue;
-        }
-        // to be deprecated after babric sprint compat
-        if (m.id == "unitweaks") {
-            await copy("./adjustments/UniTweaks-0.15.0.jar", `${modsDir}/UniTweaks-0.15.0.jar`)
+        if (m.id == "fabric-language-kotlin") {
+            await copy("./adjustments/fabric-language-kotlin-1.12.3+kotlin.2.0.21.jar", `${modsDir}/fabric-language-kotlin-1.12.3+kotlin.2.0.21.jar`)
             continue;
         }
         if (m.modrinth_id != undefined) {

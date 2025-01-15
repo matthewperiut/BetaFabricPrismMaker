@@ -11,6 +11,8 @@
 
 <body>
     <div id="app">
+        <button id="select-all-button" class="select-all-button" onclick="toggleSelectAll()">Select All</button>
+
         <h1>Beta 1.7.3 Fabric Modpack Creator</h1>
 
         <div class="repo-list">
@@ -168,6 +170,33 @@
                 closeModal();
             }
         }
+
+        function toggleSelectAll() {
+            const selectAllButton = document.getElementById('select-all-button');
+            const allButtons = document.querySelectorAll('.add-button');
+            const allSelected = Array.from(allButtons).every(button => button.classList.contains('checked'));
+
+            if (allSelected) {
+                // Deselect all if already selected
+                allButtons.forEach(button => {
+                    if (button.classList.contains('checked')) {
+                        toggleButton(button, button.dataset.modid);
+                    }
+                });
+                selectAllButton.textContent = 'Select All';
+                selectAllButton.classList.remove('selected');
+            } else {
+                // Select all if not already selected
+                allButtons.forEach(button => {
+                    if (!button.classList.contains('checked')) {
+                        toggleButton(button, button.dataset.modid);
+                    }
+                });
+                selectAllButton.textContent = 'Deselect All';
+                selectAllButton.classList.add('selected');
+            }
+        }
+
     </script>
 </body>
 

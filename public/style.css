@@ -239,6 +239,26 @@ body {
     background-color: limegreen;
 }
 
+body .select-all-button {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background-color: var(--button-bg);
+    color: var(--button-text);
+    border: none;
+    padding: 10px 20px;
+    font-size: 1rem;
+    border-radius: 20px;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 10; /* Ensure it stays above other elements */
+    transition: background-color 0.3s ease;
+}
+
+body .select-all-button.selected {
+    background-color: limegreen;
+}
+
 .download-button {
     background-color: var(--button-bg);
     color: var(--button-text);
