@@ -2,3 +2,4 @@ versionTextConfig:
   showVersionTextIngame: false
 panoramaConfig:
   enablePanorma: false
+showPhotoModeButton: false

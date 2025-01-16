@@ -209,7 +209,10 @@ async function unzipFile(zipFilePath: string, destDirectory: string) {
             await copy("./adjustments/fabric-language-kotlin-1.12.3+kotlin.2.0.21.jar", `${modsDir}/fabric-language-kotlin-1.12.3+kotlin.2.0.21.jar`)
             continue;
         }
-        if (m.modrinth_id != undefined) {
+        if (m.id == "unitweaks") {
+            await copy("./adjustments/UniTweaks-4c9293b.jar", `${modsDir}/UniTweaks-4c9293b.jar`)
+            continue;
+        }        if (m.modrinth_id != undefined) {
             await downloadLatestModrinthJar(m.id, m.modrinth_id);
         } else {
             await downloadLatestJar(m.id, m.repo);
